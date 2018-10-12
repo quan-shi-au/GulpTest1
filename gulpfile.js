@@ -8,6 +8,7 @@ var uglify = require('gulp-uglify');
 var gulpIf=require('gulp-if');
 var cssnano = require('gulp-cssnano');
 var runsequence = require('run-sequence');
+var cacheBuster = require('gulp-cache-bust');
 
 gulp.task('hello', function() {
     
@@ -62,6 +63,15 @@ gulp.task('useref', function(){
     
 })
 
+gulp.task ('cacheBuster', ['sass', 'useref'], function() {
+
+    return gulp.src('dist/**/*.html')
+    .pipe(cacheBuster())
+    .pipe(gulp.dest('dist'));
+
+})
+
+
 gulp.task('default', function(callback) {
-    runsequence('sass', 'useref', callback);
+    runsequence('sass', 'useref', 'cacheBuster', callback);
 })
