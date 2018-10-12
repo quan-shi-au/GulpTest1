@@ -3,6 +3,11 @@ var sass = require('gulp-sass');
 var imagemin = require('gulp-imagemin');
 var changed = require('gulp-changed');
 var browsersync = require('browser-sync').create();
+var useref = require('gulp-useref');
+var uglify = require('gulp-uglify');
+var gulpIf=require('gulp-if');
+var cssnano = require('gulp-cssnano');
+var runsequence = require('run-sequence');
 
 gulp.task('hello', function() {
     
@@ -46,4 +51,17 @@ gulp.task('browserSync', function() {
             baseDir: 'app'
         }
     });
+})
+
+gulp.task('useref', function(){
+    return gulp.src('app/*.html')
+    .pipe(useref())
+    .pipe(gulpIf('*.js', uglify()))
+    .pipe(gulpIf('*.css', cssnano()))
+    .pipe(gulp.dest('dist'));
+    
+})
+
+gulp.task('default', function(callback) {
+    runsequence('sass', 'useref', callback);
 })
